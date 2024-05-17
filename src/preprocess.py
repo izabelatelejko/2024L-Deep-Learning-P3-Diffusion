@@ -3,7 +3,12 @@
 import cv2
 import numpy as np
 import os
+import torch
 from tqdm import tqdm
+from torch.utils.data import DataLoader
+import torchvision.transforms as transforms
+from torchvision.datasets import ImageFolder
+from torch.utils.data import Subset
 
 
 def calculate_global_mean_and_std(data_path="data/data0/lsun/bedroom"):
@@ -25,3 +30,24 @@ def calculate_global_mean_and_std(data_path="data/data0/lsun/bedroom"):
 
     np.save("data/global_std.npy", stds / img_count)
     np.save("data/global_mean.npy", means / img_count)
+
+
+def get_data_loader(data_path, batch_size, vae=None):
+    """Returns a dataloader for the given data_path."""
+    if vae is not None:
+        transform = transforms.Compose(
+            [
+                transforms.Resize((256, 256)),
+                transforms.ToTensor(),
+                transforms.Lambda(lambda x: vae.to_latent(x.unsqueeze(0)).squeeze(0)),
+            ]
+        )
+    else:
+        transform = transforms.Compose(
+            [transforms.Resize((64, 64)), transforms.ToTensor()]
+        )
+
+    image_dataset = ImageFolder(root=data_path, transform=transform)
+    image_dataset = Subset(image_dataset, torch.randperm(len(image_dataset))[:1000])
+    dataloader = DataLoader(image_dataset, batch_size=batch_size, shuffle=True)
+    return dataloader

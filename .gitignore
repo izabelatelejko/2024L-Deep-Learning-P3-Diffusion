@@ -1,6 +1,8 @@
 # data
 data/data0/*
 data/sample/*
+model_checkpoints/*
+lsun.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

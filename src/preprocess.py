@@ -32,7 +32,7 @@ def calculate_global_mean_and_std(data_path="data/data0/lsun/bedroom"):
     np.save("data/global_mean.npy", means / img_count)
 
 
-def get_data_loader(data_path, batch_size, vae=None):
+def get_data_loader(data_path, batch_size, vae=None, n=1000):
     """Returns a dataloader for the given data_path."""
     if vae is not None:
         transform = transforms.Compose(
@@ -48,6 +48,6 @@ def get_data_loader(data_path, batch_size, vae=None):
         )
 
     image_dataset = ImageFolder(root=data_path, transform=transform)
-    image_dataset = Subset(image_dataset, torch.randperm(len(image_dataset))[:1000])
+    image_dataset = Subset(image_dataset, torch.randperm(len(image_dataset))[:n])
     dataloader = DataLoader(image_dataset, batch_size=batch_size, shuffle=True)
     return dataloader

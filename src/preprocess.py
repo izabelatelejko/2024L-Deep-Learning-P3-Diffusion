@@ -10,6 +10,9 @@ import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import Subset
 
+GLOBAL_MEAN = np.load("data/global_mean.npy")
+GLOBAL_STD = np.load("data/global_std.npy")
+
 
 def calculate_global_mean_and_std(data_path="data/data0/lsun/bedroom"):
     """Calculate and save global mean and std for each color channel across all images."""
@@ -39,6 +42,7 @@ def get_data_loader(data_path, batch_size, vae=None, n=1000):
             [
                 transforms.Resize((256, 256)),
                 transforms.ToTensor(),
+                transforms.Normalize(mean=GLOBAL_MEAN, std=GLOBAL_STD),
                 transforms.Lambda(lambda x: vae.to_latent(x.unsqueeze(0)).squeeze(0)),
             ]
         )

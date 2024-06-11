@@ -3,7 +3,7 @@ data/data0/*
 data/sample/*
 model_checkpoints/*
 lsun.zip
-
+vae_out/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
